@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Group Text – Texting Game</title>
+<style>
+:root{--bg:#0f0b1f;--sf:#17112e;--tx:#f3f0ff;--mu:#9a93c0;--in:#2a2150;--out:#8b5cf6;--outg:linear-gradient(135deg,#8b5cf6,#d946ef);--ln:#2b2352;--fd:#221a44;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.3 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.app{width:100%;height:100%;background:var(--sf);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.pad{padding:22px max(18px,calc(50% - 290px));overflow-y:auto;flex:1}
+h1{margin:0 0 4px;font-size:30px;letter-spacing:-.5px}.sub{color:var(--mu);margin:0 0 16px}
+.seg{display:flex;background:var(--fd);border-radius:12px;padding:3px;margin-bottom:14px}.seg button{flex:1;padding:9px;border-radius:10px;font-weight:600;color:var(--mu)}.seg .on{background:var(--sf);color:var(--tx);box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.lb{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;margin:12px 0 6px}
+.in{width:100%;border:0;background:var(--fd);color:var(--tx);border-radius:12px;padding:11px 12px;font:inherit;outline:none}
+.cast{display:flex;gap:10px;align-items:center;background:var(--fd);border-radius:16px;padding:10px;margin-bottom:8px;animation:pop .25s}
+.cast .in{background:var(--sf);padding:8px 10px}.cast select{background:var(--sf);color:var(--tx);border:0;border-radius:8px;padding:5px;font:inherit;font-size:12px}
+.lk{color:var(--out);font-size:12px;padding:3px 4px}.go{width:100%;margin-top:14px;background:var(--outg);color:#fff;font-weight:700;padding:14px;border-radius:14px}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:#fff}
+.top{display:flex;align-items:center;gap:8px;padding:10px max(12px,calc(50% - 450px));border-bottom:1px solid var(--ln);position:relative}
+.top .mid{flex:1;text-align:center;line-height:1.15}.top b{font-size:14px}.top small{display:block;font-size:11px;color:var(--mu)}
+.stk{display:flex;justify-content:center;margin-bottom:2px}.stk .av{border:2px solid var(--sf);margin-left:-9px}.stk .av:first-child{margin-left:0}
+.ib{width:34px;height:34px;border-radius:50%;font-size:20px;color:var(--out)}
+.msgs{flex:1;overflow-y:auto;padding:8px max(12px,calc(50% - 450px));display:flex;flex-direction:column}
+.ts{text-align:center;font-size:11px;color:var(--mu);margin:12px 0 6px}
+.row{display:flex;gap:6px;align-items:flex-end;margin-top:2px;animation:pop .28s cubic-bezier(.2,1.3,.5,1)}.row.me{justify-content:flex-end}.row.g{margin-top:9px}
+.col{display:flex;flex-direction:column;max-width:min(76%,560px)}.me .col{align-items:flex-end}
+.nm{font-size:11px;color:var(--mu);margin:0 0 2px 12px}
+.b{position:relative;padding:8px 13px;border-radius:19px;background:var(--in);overflow-wrap:anywhere;white-space:pre-wrap;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.me .b{background:var(--outg);color:#fff}.b.rx{margin-top:10px}
+.tap{position:absolute;top:-13px;font-size:14px;background:var(--sf);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,.3)}
+.me .tap{left:-10px}.row:not(.me) .tap{right:-10px}
+.qt{font-size:12px;opacity:.85;border-left:3px solid currentColor;padding:1px 8px;margin-bottom:5px;background:rgba(0,0,0,.08);border-radius:2px}.qt b{display:block;font-size:11px}
+.meta{font-size:10.5px;color:var(--mu);margin:2px 5px 0}
+.ed{display:flex;gap:6px;background:var(--fd);border-radius:16px;padding:6px 10px;min-width:210px}.ed input{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:inherit;outline:none}.ed button{color:var(--out);font-size:13px;font-weight:600}
+.dots{display:inline-flex;gap:4px;padding:12px 14px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--mu);animation:bl 1.2s infinite}.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px max(12px,calc(50% - 450px)) 2px;scrollbar-width:none}.chips button{white-space:nowrap;border:1px solid var(--out);color:var(--out);border-radius:16px;padding:6px 12px;font-size:14px;animation:pop .3s}
+.chips button.k{border-style:dashed;color:var(--mu);border-color:var(--mu)}
+.rb{display:flex;align-items:center;gap:8px;margin:6px max(12px,calc(50% - 450px)) 0;padding:6px 10px;border-left:3px solid var(--out);background:var(--fd);border-radius:8px;font-size:13px}.rb span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rb b{display:block;color:var(--out);font-size:11px}
+.cmp{display:flex;gap:8px;padding:8px max(12px,calc(50% - 450px)) 12px;align-items:center}.cmp input{flex:1;border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:20px;padding:9px 14px;font:inherit;outline:none}
+.snd{width:32px;height:32px;border-radius:50%;background:var(--outg);color:#fff;font-weight:700}.snd:disabled{opacity:.3}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center;z-index:9;animation:fade .2s}
+.sheet{width:100%;max-width:560px;background:var(--sf);border-radius:22px 22px 0 0;padding:14px 14px 20px;animation:up .25s;max-height:70%;overflow:auto}
+.rx5{display:flex;justify-content:space-around;background:var(--fd);border-radius:24px;padding:8px;margin-bottom:10px}.rx5 button{font-size:26px;transition:.15s}.rx5 button:hover{transform:scale(1.25)}
+.sheet .it{display:block;width:100%;text-align:left;padding:12px;border-radius:12px;font-size:16px}.sheet .it:hover{background:var(--fd)}.sheet .it i{display:block;font-style:normal;font-size:12px;color:var(--mu)}
+.menu{position:absolute;right:max(10px,calc(50% - 440px));top:54px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:8;min-width:210px;padding:5px;animation:pop .18s}.menu button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px}.menu button:hover{background:var(--fd)}
+.sv{display:flex;gap:12px;align-items:center;background:var(--fd);border-radius:18px;padding:12px;margin-bottom:10px;cursor:pointer;animation:pop .25s}.sv .info{flex:1;min-width:0}.sv b{font-size:15px}.sv p{margin:2px 0 0;color:var(--mu);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sv .x{font-size:12px;color:#ff453a;margin-top:2px}
+.toast{position:absolute;top:66px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--sf);padding:8px 14px;border-radius:16px;font-size:13px;z-index:20;animation:pop .2s;white-space:nowrap}
+@keyframes pop{from{opacity:0;transform:scale(.75) translateY(8px)}to{opacity:1;transform:none}}@keyframes fade{from{opacity:0}}@keyframes up{from{transform:translateY(100%)}}@keyframes bl{0%,60%,100%{opacity:.35;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useRef,useEffect}=React,html=htm.bind(React.createElement);
+const uid=()=>Math.random().toString(36).slice(2,9),sleep=ms=>new Promise(r=>setTimeout(r,ms)),pick=a=>a[Math.floor(Math.random()*a.length)];
+const fmt=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+const COLORS=['#ff6b6b','#e1a100','#1dbf8e','#3d8bfd','#a55eea','#ec5fa8','#ff8a3d','#12b5c4'],EMOJI=['😎','🐱','🦊','🌸','🎧','🍕','👾','🌙'],PERS=['sweet','sarcastic','chill','dramatic','nerdy'],NAMES=['Riley','Sam','Jo','Max','Dani','Alex','Jordan','Taylor','Casey','Morgan','Avery','Quinn','Maya','Leo','Zoe','Noah','Ivy','Eli','Luna','Kai','Nina','Theo','Ruby','Finn','Cleo','Milo','Tess','Omar','Priya','Hana','Diego','Sofia','Jin','Amara','Luca','Mina','Ravi','Esme','Jules','Remy'],GROUPS=['The Group Chat','Chaos Committee','No Context','Brunch Besties','The Squad','Snack Appreciation Society','Unhinged & Unbothered','Weekend Plans (Never Happen)','Main Character Energy','The Gossip Hotline'];
+const rname=used=>pick(NAMES.filter(n=>!used.includes(n)))||'Friend';
+const refresh=chars=>{const used=chars.map(c=>c.name);return chars.map(c=>{if(!c.auto)return c;const n=rname(used);used.push(n);return{...c,name:n}})};
+const PAL=[
+{n:'Grape',bg:'#0f0b1f',sf:'#17112e',tx:'#f3f0ff',mu:'#9a93c0',in:'#2a2150',out:'#8b5cf6',outg:'linear-gradient(135deg,#8b5cf6,#d946ef)',ln:'#2b2352',fd:'#221a44'},
+{n:'Mint',bg:'#e6f5ef',sf:'#ffffff',tx:'#0d241c',mu:'#6b8a7e',in:'#e2f1ea',out:'#10a37f',outg:'linear-gradient(135deg,#10a37f,#0b8a8f)',ln:'#d6e8df',fd:'#eef7f3'},
+{n:'Sunset',bg:'#fff1e8',sf:'#fffaf6',tx:'#2a1410',mu:'#a07a6c',in:'#ffe4d6',out:'#f4511e',outg:'linear-gradient(135deg,#ff7a45,#e91e8c)',ln:'#f6d9c9',fd:'#fff0e6'},
+{n:'Midnight',bg:'#05080f',sf:'#0b1220',tx:'#e8f0ff',mu:'#7d90b3',in:'#18233a',out:'#2f81f7',outg:'linear-gradient(135deg,#2f81f7,#06b6d4)',ln:'#1a2740',fd:'#111a2c'}];
+const applyPal=p=>{const st=document.documentElement.style;for(const k of ['bg','sf','tx','mu','in','out','outg','ln','fd'])st.setProperty('--'+k,p[k])};
+const KEY='texting-game-saves-v1';
+const loadSaves=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}};
+const putSaves=l=>{try{localStorage.setItem(KEY,JSON.stringify(l));return true}catch(e){return false}};
+const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':new Date(t).toLocaleDateString()};
+const titleOf=c=>c.mode==='group'&&c.chars.length>1?c.groupName:c.chars[0].name;
+const mk=(i,name,auto)=>({id:uid(),name,auto:!!auto,color:COLORS[i%8],emoji:EMOJI[i%8],img:null,p:PERS[i%5]});
+
+const SEEDS=[
+['ok so are we doing something this weekend or what','maybe, what are the options?','there’s a new place downtown, wanna check it out?',['yes, let’s go saturday','sunday works better','what’s the place called?']],
+['ok random but what’s the best snack ever','depends, sweet or salty?','salty. always. fight me?',['salty, obviously','sweet wins','chips and chocolate together']],
+['i had the weirdest dream last night','ok now i’m curious, what happened?','you were in it. also a giant duck. want the full story?',['yes tell me everything','a duck?? why','i’m scared to ask']],
+['did you see that thing online today??','which thing, i see a lot of things','the viral one!! everyone’s talking about it, have you really not seen it?',['no, send it','i think i saw it','tell me what it is']],
+['movie night this friday? i need votes','depends, what’s on the list?','a scary one, a rom-com, or that anime everyone loves. which one?',['scary one','rom-com','the anime']],
+['ok hear me out: spontaneous trip next month','define spontaneous','like booking tomorrow spontaneous. are you in?',['i’m in','too soon, give me time','where to?']],
+['ok hot take: mornings are overrated','controversial. defend yourself','sleep is the real superpower. are you a morning person or not?',['team sleep','i’m a morning person','coffee changes my mind']],
+['guess what happened to me today','ok go, i’m ready','i bumped into my old teacher at the store and it was so awkward, has that ever happened to you?',['omg yes','what did you say?','lol no, tell me more']]];
+let LT=-1;
+const seed=(chars,group)=>{let i;do{i=Math.floor(Math.random()*SEEDS.length)}while(i===LT);LT=i;
+ const S=SEEDS[i],a=chars[0],b=group?chars[1%chars.length]:a,n=Date.now();
+ return[[a.id,S[0],8],['me',S[1],7],[b.id,S[2],6]].map(([f,t,m],k)=>({id:uid(),from:f,text:t,time:n-m*60000,sg:k===2?S[3]:undefined}))};
+
+let SMP=null;
+const getSample=()=>SMP||(SMP=(async()=>{try{return window.claude?await window.claude.use('sample'):null}catch(e){return null}})());
+async function aiReply(cfg,msgs,group,nudge){
+ const sm=await getSample();if(!sm)return null;
+ const chars=cfg.chars,nm=id=>id==='me'?'You':(chars.find(c=>c.id===id)||{}).name||'?';
+ const tr=msgs.slice(-30).map(m=>nm(m.from)+': '+(m.rep?`[replying to ${nm(m.rep.from)}: "${m.rep.text.slice(0,60)}"] `:'')+(m.react?`[${m.react} tapback] `:'')+m.text).join('\n');
+ const prompt=`You are writing the next text messages in a realistic phone chat for a texting game. The human player is "You". Never write messages for You.
+Chat: ${group?`group chat "${cfg.groupName}" with You and ${chars.map(c=>c.name).join(', ')}`:`private chat between You and ${chars[0].name}`}.
+Characters (each is a distinct friend of You with a fixed personality; keep it consistent):
+${chars.map(c=>`- ${c.name} (${c.p})`).join('\n')}
+Rules:
+1. Reply directly to You's latest message first (or the message they quoted). Answer what was asked and react to what was said. Stay on the current topic.
+2. Remember everything said earlier (names, plans, opinions, facts, jokes). Never contradict it or a character's earlier stance. Call back to earlier details when natural.
+3. If You change the subject, follow You to the new topic. A character may bring up a new topic only with a clear reason ("wait, that reminds me...", a related question, a callback), never randomly.
+4. Group chat: only characters with a reason to speak do so: the one addressed, the one who asked a question, or someone with a clear reaction (agreeing, disagreeing, teasing, supporting). Usually 1-2 speakers, never everyone. They can react to each other by name.
+5. Real texting voice: short (usually under 15 words), casual, lowercase is fine, little emoji, no narration, no asterisks, no quotation marks around messages. 1-3 messages total, each with a clear purpose. End with a question only when it fits.
+6. Never mention being an AI or a game.
+Return ONLY JSON, no markdown: {"messages":[{"from":"<exact name>","text":"..."}],"react":null,"suggestions":["...","...","..."]}
+"react" is null or {"from":"<exact name>","emoji":"<one emoji>"} when a character would naturally react to You's last message.
+"suggestions": three short things You could say next (first person, under 8 words, different intents: answer or agree, push back or joke, change the subject) that fit the last message.
+Task: ${nudge?'You went quiet. Have the most fitting character naturally continue: follow up on the last thread or re-ask an unanswered question, or bring up something related with a reason.':'Write the reply to You\'s latest message.'}
+Transcript (oldest first):
+${tr}`;
+ try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),25000);
+  const r=await sm(prompt,{cache:false,signal:ac.signal});clearTimeout(tm);
+  const j=JSON.parse(r.text.slice(r.text.indexOf('{'),r.text.lastIndexOf('}')+1)),by=n=>chars.find(c=>c.name.toLowerCase()===String(n||'').toLowerCase()),items=[];
+  (j.messages||[]).slice(0,3).forEach(m=>{const c=by(m.from),t=String(m.text||'').trim().slice(0,240);if(c&&t)items.push({from:c.id,text:t})});
+  if(!items.length)return null;
+  const sg=(j.suggestions||[]).filter(s=>typeof s==='string'&&s.trim()).slice(0,3).map(s=>s.trim().slice(0,60));
+  if(sg.length)items[items.length-1].sg=sg;
+  if(!nudge&&j.react&&by(j.react.from)&&typeof j.react.emoji==='string'&&j.react.emoji.length<=8)items.unshift({react:j.react.emoji,from:by(j.react.from).id});
+  return items}catch(e){return null}}
+function local(text,chars,group){
+ const t=text.toLowerCase().trim(),c=group?pick(chars):chars[0],w=(t.match(/[a-z]{5,}/g)||[]).filter(x=>!/^(think|about|would|could|should|really|there|their|where|which|thing|things|going|maybe)$/.test(x)).sort((a,b)=>b.length-a.length)[0];
+ const L=!t?['so anyway, what are you up to?']:/\?$/.test(t)?[`hm, ${w?'about '+w+', ':''}honestly not sure. what do you think?`]:/^(yes|yeah|yep|sure|ok)/.test(t)?['love that, so what’s the plan?']:/^(no|nah|nope)/.test(t)?['aw ok, why not?']:w?[`wait, ${w}? tell me more`,`ha, ${w}. go on`]:['ha okay, go on'];
+ return[{from:c.id,text:pick(L)}]}
+
+function Av({c,s=32}){return html`<div className="av" style=${{width:s,height:s,fontSize:s*.5,background:c.img?`url(${c.img}) center/cover`:`linear-gradient(145deg,${c.color},${c.color}aa)`}}>${c.img?null:c.emoji}</div>`}
+
+function Dots({pal,setPal}){return html`<div style=${{display:'flex',gap:8,margin:'0 0 14px'}}>${PAL.map((p,i)=>html`<button key=${p.n} title=${p.n} onClick=${()=>setPal(i)} style=${{width:30,height:30,borderRadius:'50%',background:p.outg,border:i===pal?'3px solid var(--tx)':'3px solid transparent'}}></button>`)}</div>`}
+function Home({live,saves,onNew,onOpen,onDelete,pal,setPal}){
+ const[del,setDel]=useState(null);
+ const card=(s,tag,x)=>{const last=s.msgs[s.msgs.length-1];
+  return html`<div className="sv" onClick=${()=>onOpen(s)}>
+   <div style=${{display:'flex'}}>${s.cfg.chars.slice(0,3).map((a,i)=>html`<div key=${a.id} style=${{marginLeft:i?-12:0}}><${Av} c=${a} s=${40}/></div>`)}</div>
+   <div className="info"><b>${titleOf(s.cfg)}${tag}</b><p>${last?(last.from==='me'?'You: ':'')+last.text:'No messages yet'}</p></div>${x}</div>`};
+ return html`<div className="app"><div className="pad">
+  <h1>Messages</h1><p className="sub">Your chats live here.</p>
+  <${Dots} pal=${pal} setPal=${setPal}/>
+  <button className="go" style=${{marginTop:0,marginBottom:14}} onClick=${onNew}>＋ New chat</button>
+  ${live&&html`<div className="lb">Current chat</div>${card(live,live.saveId?'':' · not saved',html`<span className="meta">resume ›</span>`)}`}
+  <div className="lb">Saved chats</div>
+  ${saves.length===0&&html`<p className="sub">Nothing saved yet. Open a chat, then tap ⋯ and choose Save chat.</p>`}
+  ${saves.map(s=>html`<${React.Fragment} key=${s.id}>${card(s,'',html`<div style=${{textAlign:'right'}}><div className="meta">${ago(s.saved)}</div><button className="x" onClick=${e=>{e.stopPropagation();if(del===s.id){onDelete(s.id);setDel(null)}else setDel(s.id)}}>${del===s.id?'Tap again to delete':'Delete'}</button></div>`)}<//>`)}
+ </div></div>`}
+
+function Setup({init,onStart,pal,setPal,onBack}){
+ const[mode,setMode]=useState(init?init.mode:'private'),[gn,setGn]=useState(init?init.groupName:pick(GROUPS)),[ga,setGa]=useState(!init||init.gAuto!==false),[chars,setChars]=useState(()=>init?init.chars:(()=>{const a=rname([]);return[mk(0,a,true),mk(1,rname([a]),true)]})());
+ const list=mode==='group'?chars:chars.slice(0,1),up=(id,p)=>setChars(cs=>cs.map(c=>c.id===id?{...c,...p}:c));
+ const photo=(c,f)=>{if(!f)return;const r=new FileReader();r.onload=()=>up(c.id,{img:r.result});r.readAsDataURL(f)};
+ const go=()=>{const cs=list.map((c,i)=>({...c,name:c.name.trim()||`Friend ${i+1}`}));onStart({mode:mode==='group'&&cs.length<2?'private':mode,groupName:gn.trim()||'Group Chat',gAuto:ga,chars:cs})};
+ return html`<div className="app"><div className="pad">
+  <button className="lk" style=${{marginBottom:6}} onClick=${onBack}>‹ Back</button><h1>New Message</h1><p className="sub">Pick who you’re texting, then jump in.</p>
+  <${Dots} pal=${pal} setPal=${setPal}/>
+  <div className="seg"><button className=${mode==='private'?'on':''} onClick=${()=>setMode('private')}>Private</button><button className=${mode==='group'?'on':''} onClick=${()=>setMode('group')}>Group</button></div>
+  ${mode==='group'&&html`<div className="lb">Group name</div><input className="in" value=${gn} maxLength=30 onChange=${e=>{setGn(e.target.value);setGa(false)}}/>`}
+  <div className="lb" style=${{display:'flex',justifyContent:'space-between',alignItems:'center'}}>To<button className="lk" onClick=${()=>{const used=[];setChars(cs=>cs.map(c=>{const n=rname(used);used.push(n);return{...c,name:n,auto:true}}))}}>🎲 Shuffle names</button></div>
+  ${list.map((c,i)=>html`<div className="cast" key=${c.id}>
+   <${Av} c=${c} s=${44}/>
+   <div style=${{flex:1,minWidth:0}}><input className="in" value=${c.name} maxLength=20 placeholder=${`Name (Friend ${i+1})`} onChange=${e=>up(c.id,{name:e.target.value,auto:false})}/>
+    <div style=${{display:'flex',gap:6,alignItems:'center',marginTop:4}}>
+     <select value=${c.p} onChange=${e=>up(c.id,{p:e.target.value})}>${PERS.map(p=>html`<option key=${p}>${p}</option>`)}</select>
+     <button className="lk" onClick=${()=>up(c.id,{color:pick(COLORS),emoji:pick(EMOJI),img:null})}>🎲 Look</button>
+     <label className="lk" style=${{cursor:'pointer'}}>📷 Photo<input type="file" accept="image/*" hidden onChange=${e=>photo(c,e.target.files[0])}/></label>
+     ${mode==='group'&&list.length>2&&html`<button className="lk" style=${{color:'#ff453a'}} onClick=${()=>setChars(cs=>cs.filter(x=>x.id!==c.id))}>Remove</button>`}</div></div></div>`)}
+  ${mode==='group'&&list.length<5&&html`<button className="lk" onClick=${()=>setChars(cs=>[...cs,mk(cs.length,rname(cs.map(c=>c.name)),true)])}>＋ Add person</button>`}
+  <button className="go" onClick=${go}>Open Chat</button></div></div>`}
+
+function Chat({cfg,onSetup,onBack,onRestart,pal,setPal,init,onSnap}){
+ const{chars,mode,groupName}=cfg,group=mode==='group'&&chars.length>1,byId=Object.fromEntries(chars.map(c=>[c.id,c]));
+ const[msgs,setMsgs]=useState(()=>init?init.msgs:seed(chars,group)),[typing,setTyping]=useState(null),[tl,setTl]=useState(init?init.tl:[]),[saveId,setSaveId]=useState(init?init.saveId:null),[toast,setToast]=useState(''),[sheet,setSheet]=useState(null),[ed,setEd]=useState(null),[inp,setInp]=useState(''),[rep,setRep]=useState(null),[menu,setMenu]=useState(false);
+ const tok=useRef(0),sc=useRef(null),lp=useRef(null);
+ useEffect(()=>{sc.current&&sc.current.scrollTo({top:sc.current.scrollHeight,behavior:'smooth'})},[msgs,typing]);
+ useEffect(()=>()=>{tok.current++},[]);
+ useEffect(()=>{onSnap&&onSnap({cfg,msgs,tl,saveId})},[msgs,tl,saveId]);
+ const saveChat=()=>{const l=loadSaves(),id=saveId||uid(),rec={id,cfg,msgs,tl:tl.slice(-4),saved:Date.now()},i=l.findIndex(x=>x.id===id);
+  if(i>=0)l[i]=rec;else l.unshift(rec);
+  const ok=putSaves(l);if(ok)setSaveId(id);setMenu(false);setToast(ok?'Chat saved ✓':'Couldn’t save: storage is full or blocked');setTimeout(()=>setToast(''),2200)};
+ async function run(items,t){
+  await sleep(300);
+  for(const it of items){if(t!==tok.current)return;
+   if(it.react){await sleep(400);if(t!==tok.current)return;setMsgs(m=>{const k=m.map(x=>x.from).lastIndexOf('me');return k<0?m:m.map((x,j)=>j===k?{...x,react:it.react}:x)});continue}
+   setTyping(it.from);await sleep(700+it.text.length*40);if(t!==tok.current)return;
+   setTyping(null);setMsgs(m=>[...m,{id:uid(),from:it.from,text:it.text,time:Date.now(),sg:it.sg}]);await sleep(300)}
+  if(t===tok.current)setTyping(null)}
+ async function reply(ms,text,nudge){
+  const t=++tok.current,last=[...ms].reverse().find(m=>m.from!=='me'),named=group&&text&&chars.find(c=>text.toLowerCase().includes(c.name.toLowerCase()));
+  setTyping((named||chars.find(c=>last&&c.id===last.from)||chars[0]).id);
+  const r=await aiReply(cfg,ms,group,nudge);if(t!==tok.current)return;
+  run(r||local(text,chars,group),t)}
+ const send=txt=>{txt=txt.trim();if(!txt)return;const nm=[...msgs,{id:uid(),from:'me',text:txt,time:Date.now(),rep:rep?{from:rep.from,text:rep.text}:undefined}];setMsgs(nm);setInp('');setRep(null);setEd(null);reply(nm,txt)};
+ const keep=()=>reply(msgs,'',true);
+ const saveEdit=()=>{const i=msgs.findIndex(m=>m.id===ed.id),old=msgs[i],t=ed.text.trim();setEd(null);if(!t||t===old.text)return;
+  tok.current++;setTyping(null);setTl(b=>[...b,{label:`Branch from “${old.text.slice(0,28)}”`,note:`${msgs.length} messages`,msgs}]);
+  const nm=[...msgs.slice(0,i),{...old,text:t,edited:1,react:undefined,sg:undefined}];setMsgs(nm);if(old.from==='me')reply(nm,t)};
+ const restore=(b,i)=>{tok.current++;setTyping(null);setSheet(null);setTl(x=>x.filter((_,j)=>j!==i).concat({label:'Previous timeline',note:`${msgs.length} messages`,msgs}));setMsgs(b.msgs)};
+ const restart=()=>{setMenu(false);onRestart()};
+ const tap=(m,e)=>{setMsgs(x=>x.map(y=>y.id===m.id?{...y,react:y.react===e?undefined:e}:y));setSheet(null)};
+ const press=m=>{clearTimeout(lp.current);lp.current=setTimeout(()=>{setSheet({m});navigator.vibrate&&navigator.vibrate(15)},420)},rel=()=>clearTimeout(lp.current);
+ const last=[...msgs].reverse().find(m=>m.from!=='me'),chips=(last&&last.sg)||['haha yeah','wait, really?','tell me more'];
+ const who=id=>id==='me'?'You':(byId[id]||{}).name;
+ return html`<div className="app" onClick=${()=>menu&&setMenu(false)}>
+  <div className="top">
+   <button className="ib" onClick=${onBack} aria-label="Back">‹</button>
+   <div className="mid"><div className="stk">${(group?chars.slice(0,4):[chars[0]]).map(c=>html`<${Av} key=${c.id} c=${c} s=${group?28:40}/>`)}</div>
+    <b>${group?groupName:chars[0].name}</b><small>${typing?`${group?who(typing)+' is ':''}typing…`:'hold a message for options'}</small></div>
+   <button className="ib" onClick=${e=>{e.stopPropagation();setMenu(!menu)}} aria-label="Menu">⋯</button>
+   ${menu&&html`<div className="menu"><button onClick=${saveChat}>💾 ${saveId?'Update saved chat':'Save chat'}</button><button onClick=${onBack}>☰ All chats</button><button onClick=${restart}>↻ Restart (new topic and names)</button><button onClick=${()=>{setMenu(false);setSheet({tl:1})}}>⑂ Timelines (${tl.length})</button><button onClick=${()=>setPal((pal+1)%PAL.length)}>🎨 Color: ${PAL[pal].n} →</button><button onClick=${onSetup}>✎ New chat / edit people</button></div>`}
+  </div>
+  ${toast&&html`<div className="toast">${toast}</div>`}
+  <div className="msgs" ref=${sc}>
+   ${msgs.map((m,i)=>{const p=msgs[i-1],n=msgs[i+1],me=m.from==='me',c=byId[m.from],ts=!p||m.time-p.time>300000,run1=!p||p.from!==m.from||ts,end=!n||n.from!==m.from||n.time-m.time>300000;
+    const editing=ed&&ed.id===m.id;
+    return html`<${React.Fragment} key=${m.id}>
+     ${ts&&html`<div className="ts"><b>${new Date(m.time).toDateString()===new Date().toDateString()?'Today':new Date(m.time).toLocaleDateString()}</b> ${fmt(m.time)}</div>`}
+     <div className=${'row'+(me?' me':'')+(run1&&!ts?' g':'')}>
+      ${!me&&(end?html`<${Av} c=${c} s=${28}/>`:html`<div style=${{width:28,flex:'none'}}/>`)}
+      <div className="col">
+       ${!me&&group&&run1&&html`<div className="nm">${c.name}</div>`}
+       ${editing?html`<div className="ed"><input autoFocus value=${ed.text} onChange=${e=>setEd({...ed,text:e.target.value})} onKeyDown=${e=>{e.key==='Enter'&&saveEdit();e.key==='Escape'&&setEd(null)}}/><button onClick=${saveEdit}>Branch</button><button style=${{color:'var(--mu)'}} onClick=${()=>setEd(null)}>✕</button></div>`
+       :html`<div className=${'b'+(m.react?' rx':'')} title=${fmt(m.time)} onPointerDown=${()=>press(m)} onPointerUp=${rel} onPointerLeave=${rel} onPointerCancel=${rel} onContextMenu=${e=>{e.preventDefault();setSheet({m})}}>
+        ${m.rep&&html`<div className="qt"><b>${who(m.rep.from)}</b>${m.rep.text.slice(0,70)}</div>`}${m.text}${m.react&&html`<span className="tap">${m.react}</span>`}</div>`}
+       ${m.edited&&html`<span className="meta">Edited</span>`}
+       ${me&&i===msgs.length-1&&html`<span className="meta">${typing?'Read '+fmt(Date.now()):'Delivered'}</span>`}
+      </div></div><//>`})}
+   ${typing&&html`<div className="row g"><${Av} c=${byId[typing]} s=${28}/><div className="col">${group&&html`<div className="nm">${byId[typing].name}</div>`}<div className="b"><span className="dots"><i/><i/><i/></span></div></div></div>`}
+  </div>
+  ${!typing&&html`<div className="chips">${chips.map(s=>html`<button key=${s} onClick=${()=>send(s)}>${s}</button>`)}<button className="k" onClick=${keep}>Keep it going ↻</button></div>`}
+  ${rep&&html`<div className="rb"><span><b>Replying to ${who(rep.from)}</b>${rep.text.slice(0,60)}</span><button onClick=${()=>setRep(null)}>✕</button></div>`}
+  <div className="cmp"><input value=${inp} placeholder="iMessage" onChange=${e=>setInp(e.target.value)} onKeyDown=${e=>e.key==='Enter'&&send(inp)}/><button className="snd" disabled=${!inp.trim()} onClick=${()=>send(inp)} aria-label="Send">↑</button></div>
+  ${sheet&&html`<div className="ov" onClick=${()=>setSheet(null)}><div className="sheet" onClick=${e=>e.stopPropagation()}>
+   ${sheet.m&&html`<div className="rx5">${['❤️','😂','👍','‼️','😮','👎'].map(e=>html`<button key=${e} onClick=${()=>tap(sheet.m,e)}>${e}</button>`)}</div>
+    <button className="it" onClick=${()=>{setRep(sheet.m);setSheet(null)}}>↩ Reply</button>
+    <button className="it" onClick=${()=>{setEd({id:sheet.m.id,text:sheet.m.text});setSheet(null)}}>✎ Edit and branch</button>`}
+   ${sheet.tl&&html`<b>Timelines</b>${tl.length===0&&html`<p className="sub">Edit any message to start a new branch. Old versions show up here.</p>`}${tl.map((b,i)=>html`<button className="it" key=${i} onClick=${()=>restore(b,i)}>↩ ${b.label}<i>${b.note}</i></button>`)}`}
+   <button className="it" style=${{color:'var(--mu)'}} onClick=${()=>setSheet(null)}>Close</button></div></div>`}
+ </div>`}
+
+function App(){
+ const[screen,setScreen]=useState('home'),[cfg,setCfg]=useState(null),[draft,setDraft]=useState(null),[init,setInit]=useState(null),[k,setK]=useState(0),[pal,setPal]=useState(0),[saves,setSaves]=useState(loadSaves),[live,setLive]=useState(null),snap=useRef(null);
+ useEffect(()=>{applyPal(PAL[pal])},[pal]);
+ const open=x=>{setCfg(x.cfg);setDraft(x.cfg);setInit({msgs:x.msgs,tl:x.tl||[],saveId:x.saveId||x.id||null});setK(k+1);setScreen('chat')};
+ const home=()=>{setLive(snap.current);setSaves(loadSaves());setScreen('home')};
+ if(screen==='home')return html`<${Home} pal=${pal} setPal=${setPal} live=${live} saves=${saves} onNew=${()=>{if(draft)setDraft({...draft,chars:refresh(draft.chars),groupName:draft.gAuto?pick(GROUPS):draft.groupName});setScreen('setup')}} onOpen=${open} onDelete=${id=>{const l=loadSaves().filter(x=>x.id!==id);putSaves(l);setSaves(l)}}/>`;
+ if(screen==='setup')return html`<${Setup} pal=${pal} setPal=${setPal} init=${draft} onBack=${home} onStart=${c=>{snap.current=null;setLive(null);setCfg(c);setDraft(c);setInit(null);setK(k+1);setScreen('chat')}}/>`;
+ return html`<${Chat} pal=${pal} setPal=${setPal} key=${k} cfg=${cfg} init=${init} onSnap=${x=>{snap.current=x}} onRestart=${()=>{const nc={...cfg,chars:refresh(cfg.chars),groupName:cfg.gAuto?pick(GROUPS):cfg.groupName};setCfg(nc);setDraft(nc);setInit(null);setK(k+1)}} onBack=${home} onSetup=${()=>setScreen('setup')}/>`}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
